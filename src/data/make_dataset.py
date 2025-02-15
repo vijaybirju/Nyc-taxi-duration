@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import sys
 import logging
 from yaml import safe_load
