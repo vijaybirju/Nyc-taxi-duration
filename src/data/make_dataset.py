@@ -68,6 +68,36 @@ def read_params(input_file):
         return test_size, random_state
     
 
+def main():
+    # read the input file name  from the command 
+    input_file_name = sys.argv[1]
+    # current file path
+    current_path = Path(__file__)
+    # root directory path
+    root_path = current_path.parent.parent.parent
+    # interim directory path
+    interim_data_path = root_path / 'data' / 'interim'
+    # make directory for the interim path
+    interim_data_path.mkdir(exist_ok=True)
+    # row train file path
+    raw_df_path = root_path / 'data' / 'row' / 'extracted' / input_file_name
+    # load the training file 
+    raw_df = load_raw_data(input_path= raw_df_path)
+    # parameters from the file
+    test_size, random_state = read_params('params.yaml')
+    # split the file to train and validation data
+    train_df, val_df = train_val_split(data= raw_df,
+                                       test_size= test_size,
+                                       random_state= random_state)
+    # save the train data to the output path
+    save_data(data= train_df, output_path= interim_data_path / 'train.csv')
+    # save the val data to the output path
+    save_data(data= val_df, output_path= interim_data_path / 'val.csv')
+    
+    
+if __name__ == '__main__':
+    main()
+
 
 
 
