@@ -38,4 +38,36 @@ def train_val_split(data: pd.DataFrame,
     return train_data, val_data
 
 
+def save_data(data: pd.DataFrame,
+              output_path: Path):
+    data.to_csv(output_path, index=False)
+    dataset_logger.save_logs(msg=f"{output_path.stem + output_path.suffix} data saved successfully to the output folder",
+                             log_level='info')
+    
+
+def read_params(input_file):
+    try:
+        with open(input_file) as f:
+            params_file = safe_load(f)
+    except FileNotFoundError as e:
+        dataset_logger.save_logs(msg=f'Parameters value not found switching to defualt values for train test split',
+                                 log_level='info')
+        defualt_dict = {'test_size': 0.25,
+                        'random_state': None}
+        # read the defualt dict
+        test_size = defualt_dict['test_size']
+        random_state = defualt_dict['random_state']
+
+        return test_size, random_state
+    else:
+        dataset_logger.save_logs(msg=f'Parameters file read succussfully',
+                                 log_level='info')
+        # read the parameters from the parameters file
+        test_size = params_file['make_dataset']['test_size']
+        random_state = params_file['make_dataset']['random_state']
+        return test_size, random_state
+    
+
+
+
 
