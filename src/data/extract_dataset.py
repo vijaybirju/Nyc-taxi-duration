@@ -2,6 +2,7 @@ import logging
 from zipfile import ZipFile
 from pathlib import Path
 from src.logger import create_log_path, CustomLogger
+# from src.logger 
 
 
 # path to save the log file
@@ -16,7 +17,7 @@ extract_logger.set_log_level(level = logging.INFO)
 
 
 def extract_zip_file(input_path: Path, output_path: Path):
-    with Zipfile(input_path, 'r') as f:
+    with ZipFile(file= input_path) as f:
         f.extractall(path = output_path)
         input_file_name = input_path.stem + input_path.suffix
         extract_logger.save_logs(msg=f'{input_file_name} extracted succesfully at target path', 
@@ -32,7 +33,7 @@ def main():
     # raw data directory path
     raw_data_path = root_path/ 'data' / 'raw'
     # output path for zipfile
-    output_path = raw_data_path / 'extract'
+    output_path = raw_data_path / 'extracted'
     # make the directory for the path
     output_path.mkdir(exist_ok=True,parents=True)
     # input file path
@@ -41,11 +42,11 @@ def main():
 
     # extract the train files
     # for the train file
-    extract_zip_file(input_path = input_path /'train.zip',
+    extract_zip_file(input_path = input_path / 'train.zip',
                     output_path = output_path)
 
     # for the test file 
-    extract_zip_file(input_path = input_path /'test.zip',
+    extract_zip_file(input_path = input_path / 'test.zip',
                     output_path = output_path)
 
 

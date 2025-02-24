@@ -1,0 +1,4 @@
+[core]
+    remote = myremote
+['remote "myremote"']
+    url = C:\Users\Vijay\Mlops_Data_repo\Nyc_DVC_Remote

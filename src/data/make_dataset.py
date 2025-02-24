@@ -33,7 +33,7 @@ def train_val_split(data: pd.DataFrame,
     dataset_logger.save_logs(msg = f"Data is split in train and val with shapes { train_data.shape} and {val_data.shape} respectively",
                              log_level = 'info')
     dataset_logger.save_logs(msg = f"The Parametres values are { test_size} for test_size and { random_state} for random_state",
-                             log_leve = 'info')
+                             log_level = 'info')
     
     return train_data, val_data
 
@@ -71,17 +71,20 @@ def read_params(input_file):
 def main():
     # read the input file name  from the command 
     input_file_name = sys.argv[1]
+    print(f"Looking for root at: {input_file_name}")
     # current file path
     current_path = Path(__file__)
     # root directory path
     root_path = current_path.parent.parent.parent
+    print(f"Looking for root at: {root_path.resolve()}")
     # interim directory path
     interim_data_path = root_path / 'data' / 'interim'
     # make directory for the interim path
     interim_data_path.mkdir(exist_ok=True)
     # row train file path
-    raw_df_path = root_path / 'data' / 'row' / 'extracted' / input_file_name
+    raw_df_path = root_path / 'data' / 'raw' / 'extracted' / input_file_name
     # load the training file 
+    print(f"Looking for file at: {raw_df_path.resolve()}")
     raw_df = load_raw_data(input_path= raw_df_path)
     # parameters from the file
     test_size, random_state = read_params('params.yaml')

@@ -85,7 +85,7 @@ class CustomLogger:
 
         return self.__logger
 
-    def set_log_level(self):
+    def set_log_level(self, level=logging.DEBUG):
         """
         Sets the log level for logger.
 
