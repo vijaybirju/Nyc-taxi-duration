@@ -50,7 +50,7 @@ if __name__ == "__main__":
                                  lat1=df['pickup_latitude'],
                                  lon1=df['pickup_longitude'],
                                  lat2=df['dropoff_latitude'],
-                                 lat2=df['dropoff_longitude'])
+                                 lon2=df['dropoff_longitude'])
         # save the dataframe 
         output_path = root_path / 'data/processed/build_features'
         output_path.mkdir(parents=True,exist_ok=True)
