@@ -74,3 +74,28 @@ def drop_columns(dataframe:pd.DataFrame) -> pd.DataFrame:
         return dataframe_after_removal
 
 
+def make_date_feature(dataframe:pd.DataFrame) -> pd.DataFrame:
+    new_dataframe = dataframe.copy()
+    # No. of rows and columns before tranformation 
+    orginal_no_of_rows, original_no_of_columns = new_dataframe.shape
+
+    # convert the column to datetime column
+    new_dataframe['pickup_datetime'] = pd.to_datetime(new_dataframe['pickup_datetime'])
+    modify_logger.save_logs(msg=f'pickup_datetime column is convert to datetime {new_dataframe['pickup_datetime'].dtype}')
+
+    new_dataframe.loc[:, 'pickup_hour'] = new_dataframe['pickup_datetime'].dt.hour
+    new_dataframe.loc[:, 'pickup_day'] = new_dataframe['pickup_datetime'].dt.day
+    new_dataframe.loc[:, 'pickup_month'] = new_dataframe['pickup_datetime'].dt.month
+    new_dataframe.loc[:, 'pickup_weekday'] = new_dataframe['pickup_datetime'].dt.weekday
+    new_dataframe.loc[:,'is_weekend'] = new_dataframe.apply(lambda row: row['pickup_day'] >= 5,axis=1).astype('int')
+
+    # drop the redundant date time column
+    new_dataframe = new_dataframe.drop(columns=['pickup_datetime'])
+    modify_logger.save_logs(msg=f'pickup_datetime column dropped  verify={"pickup_datetime" not in new_dataframe.columns}')
+    
+    # number of rows and columns after transformation
+    transformed_number_of_rows, transformed_number_of_columns = new_dataframe.shape
+    modify_logger.save_logs(msg=f'The number of columns increased by 4 {transformed_number_of_columns == (original_no_of_columns + 5 - 1)}')
+    modify_logger.save_logs(msg=f'The number of rows remained the same {orginal_no_of_rows == transformed_number_of_rows}')
+    return new_dataframe
+ 
