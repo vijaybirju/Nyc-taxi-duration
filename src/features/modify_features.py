@@ -74,7 +74,7 @@ def drop_columns(dataframe:pd.DataFrame) -> pd.DataFrame:
         return dataframe_after_removal
 
 
-def make_date_feature(dataframe:pd.DataFrame) -> pd.DataFrame:
+def make_datetime_features(dataframe:pd.DataFrame) -> pd.DataFrame:
     new_dataframe = dataframe.copy()
     # No. of rows and columns before tranformation 
     orginal_no_of_rows, original_no_of_columns = new_dataframe.shape
@@ -98,4 +98,89 @@ def make_date_feature(dataframe:pd.DataFrame) -> pd.DataFrame:
     modify_logger.save_logs(msg=f'The number of columns increased by 4 {transformed_number_of_columns == (original_no_of_columns + 5 - 1)}')
     modify_logger.save_logs(msg=f'The number of rows remained the same {orginal_no_of_rows == transformed_number_of_rows}')
     return new_dataframe
- 
+
+
+def remove_passenger(dataframe:pd.DataFrame) -> pd.DataFrame:
+    # make the list of passager to keep
+    passenger_to_include = list(range(1,7))
+    # filter out the row which matches excatly the passeger in list
+    new_dataframe_filter = dataframe['passenger_count'].isna(passenger_to_include)
+    # filter the dataframe
+    new_dataframe = dataframe.loc[new_dataframe_filter,:]
+    # list the unique values in passager counts
+    unique_passager_values = list(np.sort(new_dataframe['passenger_count'].unique()))
+    modify_logger.save_logs(msg=f'The unique passager list is {unique_passager_values} varify ={passenger_to_include==unique_passager_values}')
+    return new_dataframe
+
+
+def input_modification(dataframe:pd.DataFrame) -> pd.DataFrame:
+    # drop the columns
+    new_df = drop_columns(dataframe)
+    # remove the row with having exluded passanger
+    df_passager_modification = remove_passenger(new_df)
+    # add datetime feature to data
+    df_with_datetime_feature = make_datetime_features(df_passager_modification)
+    modify_logger.save_logs(msg=f'Modification with input feature is complete')
+    return df_with_datetime_feature
+
+
+def target_modifications(dataframe:pd.DataFrame, target_column: str =TARGET_COLUMN)->pd.DataFrame:
+    # convert the target column from second to minute
+    minute_dataframe = convert_target_to_minute(dataframe,target_column)
+    # remove outlier from target columns
+    target_outlier_remove_df =  drop_above_two_hunderes_minute(minute_dataframe,target_column)
+    # plot the target columns
+    plot_target(target_outlier_remove_df,target_column, save_path = root_path / PLOT_PATH)
+    modify_logger.save_logs(msg='Modification with target feature is complete')
+    return target_outlier_remove_df
+
+
+# read the dataframe 
+def read_data(data_path):
+    df = pd.read_csv(data_path)
+    return df
+
+
+# save the dataframe to the location 
+def save_data(dataframe:pd.DataFrame, save_path: Path):
+    dataframe.to_csv(save_path)
+
+
+
+def main(data_path, filename):
+    # read the data into dataframe
+    df = read_data(data_path)
+    # do the modification to the input data
+    df_input_modification = input_modification(df)
+    # check whether the input file has target column or not
+    if filename in ['train.csv', 'val.csv']:
+        df_final = target_modifications(df_input_modification)
+    else:
+        df_final = df_input_modification
+
+    return df_final
+
+if __name__ =='__main__':
+    for ind in range(1,4):
+        # read the input file name from command 
+        input_file_path = sys.argv[ind]
+        # current file path
+        current_path = Path(__file__)
+        # root directory path 
+        root_path = current_path.parent.parent.parent
+        # input data path 
+        data_path = root_path / input_file_path
+        # get the filename
+        filename = data_path.arg[-1]
+        # call the main function 
+        df_final = main(data_path=data_path,filename=filename)
+        # save the dataframe 
+        output_path = root_path / 'data/processed/transformation'
+        # make the directory if not available 
+        output_path.mkdir(parents=True, exist_ok = True)
+        # save the data
+        save_data(df_final,output_path / filename)
+        modify_logger.save_logs(msg=f'{filename} saved at the destination folder')
+
+
+
