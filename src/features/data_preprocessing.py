@@ -68,5 +68,12 @@ def transform_output(target:pd.Series):
     return target_transform
 
 
+def read_dataframe(path:Path):
+    df = pd.read_csv(path)
+    return df
+
+def save_dataframe(dataframe:pd.DataFrame,save_path:Path):
+    dataframe.to_csv(save_path,index=False)
+
 
 
