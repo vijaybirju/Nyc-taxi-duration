@@ -50,3 +50,23 @@ def train_preprocessor(data:pd.DataFrame):
     preprocessor.fit(data)
 
     return preprocessor
+
+
+def transform_data(transformer, data:pd.DataFrame):
+    # transform data
+    data_transformed = transformer.transform(data)
+
+    return data_transformed
+
+
+def transform_output(target:pd.Series):
+    # transform target column
+    power_transform = PowerTransformer(method='yeo-johnson',standardize=True)
+    # fit and transform the target
+    target_transform = power_transform.fit(target.values.reshape(-1,1))
+
+    return target_transform
+
+
+
+
