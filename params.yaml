@@ -1,0 +1,4 @@
+data_preprocessing:
+    percentiles:
+      - 0.002
+      - 0.998
