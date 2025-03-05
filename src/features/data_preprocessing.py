@@ -177,7 +177,24 @@ def main():
             save_dataframe(dataframe=X_trans,
                         save_path=save_data_path / filename)
             
-
+        elif filename == 'test.csv':
+            df = read_dataframe(complete_input_path)
+            # load the transformer 
+            outlier_transformer = joblib.load( save_transformer_path / "outliers.joblib")
+            df_without_outliers = transform_data(transformer=outlier_transformer,
+                           data=df)
+            
+            # load the preprocessor 
+            preprocessor = joblib.load(save_transformer_path / 'preprocessor.joblib')
+            # transform the data
+            X_trans = transform_data(transformer=preprocessor,
+                                     data=df)
+            
+            # save the transformed data
+            save_dataframe(dataframe = X_trans, 
+                           save_path = save_data_path / filename)
+if __name__ == '__main__':
+    main()
             
 
 
