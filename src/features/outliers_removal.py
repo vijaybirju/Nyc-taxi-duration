@@ -23,7 +23,7 @@ class OutlierRemover(TransformerMixin,OneToOneFeatureMixin, BaseEstimator):
 
         return self 
     
-    def tranform(self, X):
+    def transform(self, X):
         X = X.copy()
 
         for ind,col in enumerate(self.col_subset):
