@@ -23,12 +23,12 @@ class OutlierRemover(TransformerMixin,OneToOneFeatureMixin, BaseEstimator):
 
         return self 
     
-def tranform(self, X):
-    X = X.copy()
+    def tranform(self, X):
+        X = X.copy()
 
-    for ind,col in enumerate(self.col_subset):
-        lower_bound, upper_bound = self.quantiles_[ind]
-        filter_df = X[(X.loc[:,col] >= lower_bound) & (X.loc[:,col] <= upper_bound)]
-        X = filter_df
-            
-    return X
+        for ind,col in enumerate(self.col_subset):
+            lower_bound, upper_bound = self.quantiles_[ind]
+            filter_df = X[(X.loc[:,col] >= lower_bound) & (X.loc[:,col] <= upper_bound)]
+            X = filter_df
+                
+        return X
