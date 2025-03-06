@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import pathlib as Path
+from pathlib import Path
 from src.logger import create_log_path, CustomLogger
 
 TARGET_COLUMN = 'trip_duration'
@@ -23,7 +23,7 @@ modify_logger.set_log_level(level = logging.INFO)
 ## Function applied on target columns
 def convert_target_to_minute(dataframe:pd.DataFrame,target_column: str) -> pd.DataFrame:
     # conver target to minute
-    dataframe.loc[:,target_column]=dataframe[target_column]/60
+    dataframe.loc[:,target_column] =pd.to_numeric(dataframe[target_column], errors="coerce") / 60
     modify_logger.save_logs(msg='Target column is converted from second to minutes')
     return dataframe
 
@@ -31,7 +31,7 @@ def convert_target_to_minute(dataframe:pd.DataFrame,target_column: str) -> pd.Da
 def drop_above_two_hunderes_minute(dataframe:pd.DataFrame,target_column: str) -> pd.DataFrame:
     # filter the row with target less 200 minutes 
     filter_series = dataframe[target_column] <= 200
-    new_dataframe = dataframe[filter_series,:].copy()
+    new_dataframe = dataframe.loc[filter_series,:].copy()
     # max value of target column to checkout the outlier are removed
     max_value = new_dataframe[target_column].max()
     modify_logger.save_logs(msg=f'The max value in target column after transformation is {max_value} and the state of tranformatoon is {max_value <= 200}')
@@ -104,7 +104,7 @@ def remove_passenger(dataframe:pd.DataFrame) -> pd.DataFrame:
     # make the list of passager to keep
     passenger_to_include = list(range(1,7))
     # filter out the row which matches excatly the passeger in list
-    new_dataframe_filter = dataframe['passenger_count'].isna(passenger_to_include)
+    new_dataframe_filter = dataframe['passenger_count'].isin(passenger_to_include)
     # filter the dataframe
     new_dataframe = dataframe.loc[new_dataframe_filter,:]
     # list the unique values in passager counts
@@ -171,7 +171,7 @@ if __name__ =='__main__':
         # input data path 
         data_path = root_path / input_file_path
         # get the filename
-        filename = data_path.arg[-1]
+        filename = data_path.parts[-1]
         # call the main function 
         df_final = main(data_path=data_path,filename=filename)
         # save the dataframe 

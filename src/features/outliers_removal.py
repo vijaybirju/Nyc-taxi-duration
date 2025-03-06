@@ -5,7 +5,7 @@ from sklearn.base import BaseEstimator, TransformerMixin, OneToOneFeatureMixin
 class OutlierRemover(TransformerMixin,OneToOneFeatureMixin, BaseEstimator):
 
     def __init__(self, percentile_values:list,col_subset:list):
-        self.percentile_value = percentile_values
+        self.percentile_values = percentile_values
         self.col_subset = col_subset
 
     def fit(self, X, y = None):
@@ -13,7 +13,7 @@ class OutlierRemover(TransformerMixin,OneToOneFeatureMixin, BaseEstimator):
         X = X.copy()
         
 
-        self.quantiles = []
+        self.quantiles_ = []
 
         for col in self.col_subset:
             lower_bound = X.loc[:,col].quantile(q=self.percentile_values[0])

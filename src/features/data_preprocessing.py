@@ -2,7 +2,7 @@ import numpy as np
 from yaml import safe_load
 import pandas as pd
 from pathlib import Path
-from logger import create_log_path, CustomLogger
+from src.logger import create_log_path, CustomLogger
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, PowerTransformer
 from src.features.outliers_removal import OutlierRemover
@@ -111,8 +111,9 @@ def main():
     save_data_path.mkdir(exist_ok=True)
 
     for filename in sys.argv[1:]:
+        # filename = filename.parts[-1]
         complete_input_path = input_path / filename
-        if filename is 'train.csv':
+        if filename == 'train.csv':
             # read file
             df = read_dataframe(complete_input_path)
             # split input and output data
@@ -123,7 +124,7 @@ def main():
                                                 columns_name=COLUMN_NAMES)
             preprocessing_logger.save_logs(msg=f'Outlier is removed from {filename.split(".")[0]} file')
             # save the transformer 
-            save_transformer(path = save_transformer / 'outlier.joblib',
+            save_transformer(path = save_transformer_path / 'outlier.joblib',
                              object=outlier_transformer)
             # transform the data
             df_without_outliers = transform_data(transformer= outlier_transformer,
@@ -158,7 +159,7 @@ def main():
             X = df.drop(columns=TARGET)
             y = df[TARGET]
             #  load the transfomer
-            outlier_transformer = joblib.load(save_transformer_path / "outliers.joblib")
+            outlier_transformer = joblib.load(save_transformer_path / 'outlier.joblib')
             df_without_outliers = transform_data(transformer=outlier_transformer, data = X)
 
             # load the preprocessor
@@ -180,7 +181,7 @@ def main():
         elif filename == 'test.csv':
             df = read_dataframe(complete_input_path)
             # load the transformer 
-            outlier_transformer = joblib.load( save_transformer_path / "outliers.joblib")
+            outlier_transformer = joblib.load( save_transformer_path / "outlier.joblib")
             df_without_outliers = transform_data(transformer=outlier_transformer,
                            data=df)
             
