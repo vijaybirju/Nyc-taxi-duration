@@ -23,7 +23,7 @@ modify_logger.set_log_level(level = logging.INFO)
 ## Function applied on target columns
 def convert_target_to_minute(dataframe:pd.DataFrame,target_column: str) -> pd.DataFrame:
     # conver target to minute
-    dataframe.loc[:,target_column] =pd.to_numeric(dataframe[target_column], errors="coerce") / 60
+    dataframe.loc[:,target_column] = pd.to_numeric(dataframe[target_column], errors="coerce") / 60
     modify_logger.save_logs(msg='Target column is converted from second to minutes')
     return dataframe
 
