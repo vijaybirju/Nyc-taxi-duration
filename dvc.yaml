@@ -1,4 +1,11 @@
 stages:
+  extract_dataset:
+    cmd: python src.data.extract_dataset.py
+    deps:
+      - src/data/extract_dataset.py
+      - /data/raw/zipped
+    outs:
+      - /data/raw/extracted
   make_dataset:
     cmd: python -m src.data.make_dataset train.csv
     deps:
@@ -10,3 +17,4 @@ stages:
     outs:
     - data/interim/train.csv
     - data/interim/val.csv
+  
