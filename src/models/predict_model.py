@@ -46,15 +46,15 @@ def main():
         # make X and y
         X_test, y_test = make_x_y(dataframe=data, target_column=TARGET)
         # model path 
-        model_path = root_path / 'model' / 'model' / model_name
+        model_path = root_path / 'models' / 'models' / model_name
         # load the model
         model = joblib.load(model_path)
         # get predictions from model
         y_pred = get_predictions(model=model,X=X_test)
         # calcuate the r2 score
-        score = calculate_r2_score(y_actual=y_test,y_predicted=y_pred)
+        score = calculate_r2_score(y_actual=y_test,y_prediction=y_pred)
         
-        print(f'\nThe score for dataset {sys.argv[ind]} is {score}')
+        print(f'\nThe R2 score for dataset {sys.argv[ind]} is {score}')
     
 if __name__ == "__main__":
     main()

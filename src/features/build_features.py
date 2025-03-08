@@ -2,7 +2,7 @@ import sys
 import pandas as pd 
 import numpy as np
 from pathlib import Path
-from distances import euclidean_distance, manhattan_distance, haversine_distance
+from src.features.distances import euclidean_distance, manhattan_distance, haversine_distance
 
 
 new_feature_name =  ['haversine_distance',
