@@ -1,11 +1,12 @@
 stages:
   extract_dataset:
-    cmd: python src.data.extract_dataset.py
+    cmd: python -m src.data.extract_dataset
     deps:
       - src/data/extract_dataset.py
-      - /data/raw/zipped
+      - data/raw/zipped
     outs:
-      - /data/raw/extracted
+      - data/raw/extracted
+
   make_dataset:
     cmd: python -m src.data.make_dataset train.csv
     deps:
@@ -18,3 +19,54 @@ stages:
     - data/interim/train.csv
     - data/interim/val.csv
   
+  modify_features:
+    cmd: python -m src.features.modify_features data/interim/train.csv data/interim/val.csv data/raw/extracted/test.csv
+    deps:
+    - src/features/modify_features.py
+    - data/interim/train.csv
+    - data/interim/val.csv
+    - data/raw/extracted/test.csv
+    outs:
+    - data/processed/transformation
+
+  build_features:
+    cmd: python -m src.features.build_features data/processed/transformation/train.csv data/processed/transformation/val.csv data/processed/transformation/test.csv
+    deps:
+    - src/features/build_features.py
+    - data/processed/transformation/train.csv
+    - data/processed/transformation/val.csv
+    - data/processed/transformation/test.csv
+    outs:
+    - data/processed/build_features
+
+  data_preprocessing:
+    cmd: python -m src.features.data_preprocessing train.csv val.csv test.csv
+    deps:
+    - src/features/data_preprocessing.py 
+    - data/processed/build_features/train.csv
+    - data/processed/build_features/val.csv
+    - data/processed/build_features/test.csv
+    outs:
+    - data/processed/final
+
+  train_model:
+    cmd: python -m src.models.train_model data/processed/final/train.csv
+    deps:
+    - src/models/train_model.py
+    - data/processed/final/train.csv
+    outs:
+    - models/models
+
+  predict_model:
+    cmd: python -m src.models.predict_model train.csv val.csv
+    deps:
+    - src/models/predict_model.py
+    - data/processed/final/train.csv
+    - data/processed/final/val.csv
+    - models/models
+
+
+  
+  
+
+
